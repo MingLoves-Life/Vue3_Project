@@ -22,3 +22,5 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+ <!-- token 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 -->
