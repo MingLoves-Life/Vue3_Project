@@ -1,18 +1,25 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div>
+    <Header class="header" />
+    <Aside class="aside" />
+    <div class="context">
+      <router-view />
+    </div>
   </div>
 </template>
-
-<script lang="ts">
+<script>
 import { defineComponent } from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import Header from "../components/Header.vue";
+import Aside from "../components/Aside";
 
 export default defineComponent({
-  name: "Home",
-  components: {
-    HelloWorld,
-  },
+  components: { Header, Aside },
 });
 </script>
+<style scoped>
+.context {
+  position: absolute;
+  left: 250px;
+  top: 70px;
+}
+</style>

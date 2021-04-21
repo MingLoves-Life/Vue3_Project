@@ -1,20 +1,87 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+
 import Home from "../views/Home.vue";
+import Person from "../views/Person.vue";
+import Audit from "../views/Audit.vue";
+import Management from "../views/Management.vue";
+import Payment from "../views/Payment.vue";
+import Account from "../views/Account.vue";
+import Task from "../views/Task.vue";
+import Upload from "../views/Upload.vue";
+import Reader from "../views/Reader.vue";
 
 const routes: Array<RouteRecordRaw> = [
+  { path: "/", redirect: "/Person" },
   {
     path: "/",
     name: "Home",
     component: Home,
-  },
-  {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
+    children: [
+      {
+        path: "/Person",
+        name: "Person",
+        meta: {
+          title: "个人中心",
+        },
+        component: Person,
+      },
+      {
+        path: "/Audit",
+        name: "Audit",
+        meta: {
+          title: "稿件审核",
+        },
+        component: Audit,
+      },
+      {
+        path: "/Management",
+        name: "Management",
+        meta: {
+          title: "稿件管理",
+        },
+        component: Management,
+      },
+      {
+        path: "/Payment",
+        name: "Payment",
+        meta: {
+          title: "稿费统计",
+        },
+        component: Payment,
+      },
+      {
+        path: "/Account",
+        name: "Account",
+        meta: {
+          title: "账户管理",
+        },
+        component: Account,
+      },
+      {
+        path: "/Task",
+        name: "Task",
+        meta: {
+          title: "任务中心",
+        },
+        component: Task,
+      },
+      {
+        path: "/Upload",
+        name: "Upload",
+        meta: {
+          title: "稿件上传",
+        },
+        component: Upload,
+      },
+      {
+        path: "/Reader",
+        name: "Reader",
+        meta: {
+          title: "读者交流",
+        },
+        component: Reader,
+      },
+    ],
   },
 ];
 
