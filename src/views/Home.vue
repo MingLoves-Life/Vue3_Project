@@ -19,7 +19,11 @@ export default defineComponent({
 <style scoped>
 .context {
   position: absolute;
-  left: 250px;
   top: 70px;
+  right: 0px;
+  bottom: 0px;
+  left: 250px;
+  background-color: #f0f0f0;
+  padding: 10px;
 }
 </style>
