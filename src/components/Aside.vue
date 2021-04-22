@@ -17,25 +17,28 @@
         <template #title>账户管理</template>
       </el-menu-item>
 
-      <el-menu-item index="Management">
-        <i class="el-icon-menu"></i>
-        <template #title>稿件管理</template>
-      </el-menu-item>
+      <el-submenu index="Management">
+        <template #title>
+          <i class="el-icon-menu"></i>
+          <span> 稿件管理</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="Payment">
+            <i class="el-icon-menu"></i>
+            <template #title>稿件列表</template>
+          </el-menu-item>
 
-      <el-menu-item index="Payment">
-        <i class="el-icon-menu"></i>
-        <template #title>稿费统计</template>
-      </el-menu-item>
+          <el-menu-item index="Audit">
+            <i class="el-icon-menu"></i>
+            <template #title>稿件审核</template>
+          </el-menu-item>
 
-      <el-menu-item index="Audit">
-        <i class="el-icon-menu"></i>
-        <template #title>稿件审核</template>
-      </el-menu-item>
-
-      <el-menu-item index="Upload">
-        <i class="el-icon-menu"></i>
-        <template #title>稿件上传</template>
-      </el-menu-item>
+          <el-menu-item index="Upload">
+            <i class="el-icon-menu"></i>
+            <template #title>稿件上传</template>
+          </el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
 
       <el-menu-item index="Reader">
         <i class="el-icon-menu"></i>

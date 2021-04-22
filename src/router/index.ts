@@ -25,14 +25,7 @@ const routes: Array<RouteRecordRaw> = [
         },
         component: Person,
       },
-      {
-        path: "/Audit",
-        name: "Audit",
-        meta: {
-          title: "稿件审核",
-        },
-        component: Audit,
-      },
+
       {
         path: "/Management",
         name: "Management",
@@ -45,9 +38,25 @@ const routes: Array<RouteRecordRaw> = [
         path: "/Payment",
         name: "Payment",
         meta: {
-          title: "稿费统计",
+          title: "稿件列表",
         },
         component: Payment,
+      },
+      {
+        path: "/Audit",
+        name: "Audit",
+        meta: {
+          title: "稿件审核",
+        },
+        component: Audit,
+      },
+      {
+        path: "/Upload",
+        name: "Upload",
+        meta: {
+          title: "稿件上传",
+        },
+        component: Upload,
       },
       {
         path: "/Account",
@@ -65,14 +74,7 @@ const routes: Array<RouteRecordRaw> = [
         },
         component: Task,
       },
-      {
-        path: "/Upload",
-        name: "Upload",
-        meta: {
-          title: "稿件上传",
-        },
-        component: Upload,
-      },
+
       {
         path: "/Reader",
         name: "Reader",

@@ -25,5 +25,6 @@ export default defineComponent({
   left: 250px;
   background-color: #f0f0f0;
   padding: 10px;
+  overflow: scroll;
 }
 </style>

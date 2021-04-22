@@ -2,7 +2,7 @@
   <div class="person">
     <el-row :gutter="20">
       <el-col :span="8">
-        <el-card class="box-card">
+        <el-card shadow="hover" class="box-card">
           <div class="avator">
             <div class="avator_top">
               <div class="block">
@@ -19,7 +19,7 @@
             </div>
           </div>
         </el-card>
-        <el-card class="box-card agebox">
+        <el-card shadow="hover" class="box-card agebox">
           <template #header>
             <div class="clearfix">
               <span>读者年龄</span>
@@ -37,6 +37,7 @@
           <el-col :span="8">
             <el-card
               class="box-card"
+              shadow="hover"
               :body-style="{ padding: '0px', border: '0px' }"
             >
               <div class="iconbox first">
@@ -49,7 +50,7 @@
             </el-card>
           </el-col>
           <el-col :span="8">
-            <el-card class="box-card" :body-style="{ padding: '0px' }">
+            <el-card shadow="hover" class="box-card" :body-style="{ padding: '0px' }">
               <div class="iconbox second">
                 <i class="el-icon-message-solid icon"></i>
                 <div class="grid-cont-right">
@@ -60,7 +61,7 @@
             </el-card>
           </el-col>
           <el-col :span="8">
-            <el-card class="box-card" :body-style="{ padding: '0px' }">
+            <el-card shadow="hover" class="box-card" :body-style="{ padding: '0px' }">
               <div class="iconbox third">
                 <i class="el-icon-s-goods icon"></i>
                 <div class="grid-cont-right">
@@ -71,7 +72,7 @@
             </el-card>
           </el-col>
         </el-row>
-        <el-card class="box-card event">
+        <el-card shadow="hover" class="box-card event">
           <template #header>
             <div class="clearfix">
               <span>待办事项</span>
@@ -81,15 +82,22 @@
 
           <el-table :show-header="false" :data="todoList" style="width: 100%">
             <el-table-column width="40">
-              <template>
-                <el-checkbox></el-checkbox>
+              <template #default="scope">
+                <el-checkbox v-model="scope.row.status"></el-checkbox>
               </template>
             </el-table-column>
+
             <el-table-column>
-              <template>
-                <div class="todo-item"></div>
+              <template #default="scope">
+                <div
+                  class="todo-item"
+                  :class="{
+                    'todo-item-del': scope.row.status,
+                  }"
+                >{{ scope.row.title }}</div>
               </template>
             </el-table-column>
+
             <el-table-column width="60">
               <template>
                 <i class="el-icon-edit"></i>
@@ -100,22 +108,132 @@
         </el-card>
       </el-col>
       <el-col :span="12">
-        <el-card class="box-card">
-          <div>777</div>
+        <el-card shadow="hover" class="box-card">
+          <v-chart class="chart" :option="option1" />
         </el-card>
       </el-col>
       <el-col :span="12">
-        <el-card class="box-card">
-          <div>888</div>
+        <el-card shadow="hover" class="box-card">
+          <div>
+            <v-chart class="chart" :option="option2" />
+          </div>
         </el-card>
       </el-col>
     </el-row>
   </div>
 </template>
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
+import { use } from "echarts/core";
+import { CanvasRenderer } from "echarts/renderers";
+import { PieChart, LineChart } from "echarts/charts";
+import {
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+  ToolboxComponent,
+} from "echarts/components";
+import VChart from "vue-echarts";
+use([
+  CanvasRenderer,
+  PieChart,
+  LineChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+  ToolboxComponent,
+]);
 export default defineComponent({
   name: "Person",
+  components: {
+    VChart,
+  },
+  setup: () => {
+    const option1 = ref({
+      title: {
+        text: "读者意见分布",
+        left: "center",
+      },
+      tooltip: {
+        trigger: "item",
+        formatter: "{a} <br/>{b} : {c} ({d}%)",
+      },
+      legend: {
+        orient: "vertical",
+        left: "left",
+        data: ["好评", "差评", "一般般", "稍好", "稍差"],
+      },
+      series: [
+        {
+          name: "Traffic Sources",
+          type: "pie",
+          radius: "55%",
+          center: ["50%", "60%"],
+          data: [
+            { value: 335, name: "一般般" },
+            { value: 310, name: "稍好" },
+            { value: 234, name: "稍差" },
+            { value: 135, name: "差评" },
+            { value: 1548, name: "好评" },
+          ],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: "rgba(0, 0, 0, 0.5)",
+            },
+          },
+        },
+      ],
+    });
+
+    const option2 = ref({
+      title: {
+        text: "最近一周相关数据统计",
+      },
+      tooltip: {
+        trigger: "axis",
+      },
+      legend: {
+        right: "right",
+        data: ["阅读人数", "阅读收益"],
+      },
+      xAxis: {
+        type: "category",
+        boundaryGap: false,
+        data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+      },
+      yAxis: {
+        type: "value",
+      },
+      series: [
+        {
+          name: "阅读人数",
+          type: "line",
+          smooth: true,
+          data: [1600, 1275, 3260, 3830, 2141, 2454, 2710],
+        },
+        {
+          name: "阅读收益",
+          type: "line",
+          smooth: true,
+          data: [300, 182, 434, 791, 390, 200, 310],
+        },
+      ],
+    });
+    return {
+      todoList: [
+        {
+          status: false,
+          title: "吃饭",
+        },
+      ],
+      option1,
+      option2,
+    };
+  },
 });
 </script>
 <style scoped>
@@ -187,5 +305,16 @@ export default defineComponent({
 .event {
   margin-top: 15px;
   margin-bottom: 15px;
+}
+.todo-item {
+  font-size: 14px;
+}
+
+.todo-item-del {
+  text-decoration: line-through;
+  color: #999;
+}
+.chart {
+  height: 400px;
 }
 </style>
