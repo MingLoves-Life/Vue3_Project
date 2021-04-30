@@ -9,6 +9,7 @@ import Account from "../views/Account.vue";
 import Task from "../views/Task.vue";
 import Upload from "../views/Upload.vue";
 import Reader from "../views/Reader.vue";
+import Login from "../views/Login.vue";
 
 const routes: Array<RouteRecordRaw> = [
   { path: "/", redirect: "/Person" },
@@ -84,6 +85,11 @@ const routes: Array<RouteRecordRaw> = [
         component: Reader,
       },
     ],
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
   },
 ];
 

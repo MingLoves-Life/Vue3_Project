@@ -6,16 +6,16 @@
           <div class="avator">
             <div class="avator_top">
               <div class="block">
-                <el-avatar :size="120"></el-avatar>
+                <el-avatar :src="Ava" :size="120"></el-avatar>
               </div>
               <div class="avator_text">
-                <div class="username">明明</div>
-                <div class="admin">管理员</div>
+                <div class="username">{{ userName }}</div>
+                <div class="admin">{{ permissions }}</div>
               </div>
             </div>
             <div class="datebox">
               上次登录时间：
-              <span class="date">2021-4-21</span>
+              <span class="date">{{ lastTime.split("T")[0] }}</span>
             </div>
           </div>
         </el-card>
@@ -26,10 +26,20 @@
             </div>
           </template>
           00后
-          <el-progress :percentage="36.3" color="#42b983"></el-progress>90后
-          <el-progress :percentage="44.1" color="#f1e05a"></el-progress>80后
-          <el-progress :percentage="18.7"></el-progress>70后
-          <el-progress :percentage="5.9" color="#f56c6c"></el-progress>
+          <el-progress
+            :percentage="readPersonData[0]"
+            color="#42b983"
+          ></el-progress
+          >90后
+          <el-progress
+            :percentage="readPersonData[1]"
+            color="#f1e05a"
+          ></el-progress
+          >80后 <el-progress :percentage="readPersonData[2]"></el-progress>70后
+          <el-progress
+            :percentage="readPersonData[3]"
+            color="#f56c6c"
+          ></el-progress>
         </el-card>
       </el-col>
       <el-col :span="16">
@@ -43,29 +53,37 @@
               <div class="iconbox first">
                 <i class="el-icon-user-solid icon"></i>
                 <div class="grid-cont-right">
-                  <div class="grid-num">1000</div>
+                  <div class="grid-num">{{ readNum }}</div>
                   <div class="grid-text">阅读量</div>
                 </div>
               </div>
             </el-card>
           </el-col>
           <el-col :span="8">
-            <el-card shadow="hover" class="box-card" :body-style="{ padding: '0px' }">
+            <el-card
+              shadow="hover"
+              class="box-card"
+              :body-style="{ padding: '0px' }"
+            >
               <div class="iconbox second">
                 <i class="el-icon-message-solid icon"></i>
                 <div class="grid-cont-right">
-                  <div class="grid-num">12</div>
+                  <div class="grid-num">{{ eventNum }}</div>
                   <div class="grid-text">事件量</div>
                 </div>
               </div>
             </el-card>
           </el-col>
           <el-col :span="8">
-            <el-card shadow="hover" class="box-card" :body-style="{ padding: '0px' }">
+            <el-card
+              shadow="hover"
+              class="box-card"
+              :body-style="{ padding: '0px' }"
+            >
               <div class="iconbox third">
                 <i class="el-icon-s-goods icon"></i>
                 <div class="grid-cont-right">
-                  <div class="grid-num">288</div>
+                  <div class="grid-num">{{ earningsNum }}</div>
                   <div class="grid-text">昨日收益</div>
                 </div>
               </div>
@@ -76,11 +94,22 @@
           <template #header>
             <div class="clearfix">
               <span>待办事项</span>
-              <el-button style="float: right; padding: 3px 0" type="text">添加</el-button>
+              <el-button
+                style="float: right; padding: 3px 0"
+                type="text"
+                @click="open"
+                >添加</el-button
+              >
             </div>
           </template>
 
-          <el-table :show-header="false" :data="todoList" style="width: 100%">
+          <el-table
+            :show-header="false"
+            :data="viewTodoList"
+            style="width: 100%"
+            max-height="255"
+            @current-change="checkbox"
+          >
             <el-table-column width="40">
               <template #default="scope">
                 <el-checkbox v-model="scope.row.status"></el-checkbox>
@@ -94,14 +123,9 @@
                   :class="{
                     'todo-item-del': scope.row.status,
                   }"
-                >{{ scope.row.title }}</div>
-              </template>
-            </el-table-column>
-
-            <el-table-column width="60">
-              <template>
-                <i class="el-icon-edit"></i>
-                <i class="el-icon-delete"></i>
+                >
+                  {{ scope.row.title }}
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -123,7 +147,10 @@
   </div>
 </template>
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, reactive, toRefs } from "vue";
+import axios from "axios";
+import router from "../router/index";
+import { ElMessageBox, ElMessage } from "element-plus";
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { PieChart, LineChart } from "echarts/charts";
@@ -135,6 +162,8 @@ import {
   ToolboxComponent,
 } from "echarts/components";
 import VChart from "vue-echarts";
+import URL from "@/api/api";
+import Ava from "../assets/img/avater.jpg";
 use([
   CanvasRenderer,
   PieChart,
@@ -150,7 +179,90 @@ export default defineComponent({
   components: {
     VChart,
   },
-  setup: () => {
+  setup: async () => {
+    let userInfo = reactive({});
+    const checkbox = (row) => {
+      const { title, status } = row;
+      axios({
+        url: URL.todo,
+        method: "post",
+        data: {
+          userName: localStorage.getItem("userName"),
+          todoList: [
+            ...todoList.map((item) =>
+              item.title === title
+                ? { title: item.title, status: !status }
+                : item
+            ),
+          ],
+        },
+      })
+        .then(() => {
+          ElMessage({
+            type: "success",
+            message: "修改成功",
+            center: true,
+          });
+          router.go(0);
+        })
+        .catch((err) => {
+          ElMessage({
+            type: "error",
+            message: err,
+            center: true,
+          });
+        });
+    };
+    const open = () => {
+      ElMessageBox.prompt("请输入新的待办事项", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+      })
+        .then(({ value }) => {
+          axios({
+            url: URL.todo,
+            method: "post",
+            data: {
+              userName: localStorage.getItem("userName"),
+              todoList: [...todoList, { title: value, status: false }],
+            },
+          })
+            .then(() => {
+              ElMessage({
+                type: "success",
+                message: "添加成功",
+                center: true,
+              });
+              router.go(0);
+            })
+            .catch((err) => {
+              ElMessage({
+                type: "error",
+                message: err,
+                center: true,
+              });
+            });
+        })
+        .catch(() => {
+          ElMessage({
+            type: "error",
+            message: "取消添加",
+            center: true,
+          });
+        });
+    };
+    const data = await axios({
+      url: URL.person,
+      method: "post",
+      data: { userName: localStorage.getItem("userName") },
+    });
+    const res = {};
+    Object.keys(data.data.data).forEach((item) =>
+      item.split("_").length > 1 ? null : (res[item] = data.data.data[item])
+    );
+    userInfo = res;
+    const { opinion, readData, readPersonData, todoList } = userInfo;
+
     const option1 = ref({
       title: {
         text: "读者意见分布",
@@ -172,11 +284,11 @@ export default defineComponent({
           radius: "55%",
           center: ["50%", "60%"],
           data: [
-            { value: 335, name: "一般般" },
-            { value: 310, name: "稍好" },
-            { value: 234, name: "稍差" },
-            { value: 135, name: "差评" },
-            { value: 1548, name: "好评" },
+            { value: opinion[0], name: "一般般" },
+            { value: opinion[1], name: "稍好" },
+            { value: opinion[2], name: "稍差" },
+            { value: opinion[3], name: "差评" },
+            { value: opinion[4], name: "好评" },
           ],
           emphasis: {
             itemStyle: {
@@ -213,25 +325,27 @@ export default defineComponent({
           name: "阅读人数",
           type: "line",
           smooth: true,
-          data: [1600, 1275, 3260, 3830, 2141, 2454, 2710],
+          data: readData.personNums,
         },
         {
           name: "阅读收益",
           type: "line",
           smooth: true,
-          data: [300, 182, 434, 791, 390, 200, 310],
+          data: readData.money,
         },
       ],
     });
+    const viewTodoList = todoList.reverse();
+
     return {
-      todoList: [
-        {
-          status: false,
-          title: "吃饭",
-        },
-      ],
+      ...toRefs(userInfo),
+      Ava,
       option1,
       option2,
+      readPersonData: readPersonData.map((item) => Number(item)),
+      open,
+      checkbox,
+      viewTodoList,
     };
   },
 });
